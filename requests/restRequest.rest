@@ -2,4 +2,14 @@ GET http://localhost:3001/api/persons
 
 ###
 
-DELETE http://localhost:3001/api/persons/2
+DELETE http://localhost:3001/api/persons/5
+
+###
+
+POST  http://localhost:3001/api/persons
+content-type: application/json
+
+{
+    "name" : "Arto Dhongel",
+    "number": "123456"
+}
