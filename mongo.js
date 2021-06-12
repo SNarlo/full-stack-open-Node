@@ -1,34 +1,48 @@
 const mongoose = require('mongoose')
 
-// if (process.argv.length < 3) {
-//   console.log('Please provide the password as an argument: node mongo.js <password>')
-//   process.exit(1)
-// }
+if (process.argv.length < 3) {
+  console.log('Please provide the password as an argument: node mongo.js <password>')
+  process.exit(1)
+}
 
-// const password = process.argv[2]
+const password = process.argv[2]
 
-// const url =
-//   `mongodb+srv://sebastian:${password}@cluster0.f1soc.mongodb.net/Phonebook-App?retryWrites=true&w=majority`
+const url =
+  `mongodb+srv://sebastian:${password}@cluster0.f1soc.mongodb.net/Phonebook-App?retryWrites=true&w=majority`
 
-// mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
-// const noteSchema = new mongoose.Schema({
-//   content: String,
-//   date: Date,
-//   important: Boolean,
-// })
+const phonebookSchema = new mongoose.Schema({
+  id: Number,
+  name: String,
+  number: String,
+})
 
-// const Note = mongoose.model('Note', noteSchema)
+const Entry = mongoose.model('Entry', phonebookSchema)
 
-// const note = new Note({
-//   content: 'HTML is Easy',
-//   date: new Date(),
-//   important: true,
-// })
+const entry = new Entry({
+  name: process.argv[3],
+  number: process.argv[4],
+})
 
-// note.save().then(result => {
-//   console.log('note saved!')
-//   mongoose.connection.close()
-// })
+if (process.argv.length === 3) {
+    //Retrieving entries from the phonebook
+    Entry.find({}).then(result => {
+    console.log('Phonebook:')
+    result.forEach(entry => {
+        console.log(`${entry.name} ${entry.number}`)
+    });
+    mongoose.connection.close()
+})
+}
+
+if (process.argv.length === 5) {
+    // Adding entry to the phonebook
+    entry.save().then(result => {
+    console.log(`Added ${entry.name} ${entry.number} to the phonebook!`)
+    mongoose.connection.close()
+    })
+}
+
 
 
