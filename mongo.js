@@ -4,7 +4,6 @@ if (process.argv.length < 3) {
   console.log('Please provide the password as an argument: node mongo.js <password>')
   process.exit(1)
 }
-
 const password = process.argv[2]
 
 const url =
@@ -16,6 +15,14 @@ const phonebookSchema = new mongoose.Schema({
   id: Number,
   name: String,
   number: String,
+})
+
+phonebookSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
 })
 
 const Entry = mongoose.model('Entry', phonebookSchema)
