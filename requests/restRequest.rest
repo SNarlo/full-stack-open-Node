@@ -6,7 +6,7 @@ GET https://young-thicket-23579.herokuapp.com/api/persons/2
 
 ###
 
-GET https://young-thicket-23579.herokuapp.com/info
+GET http://localhost:3001/info
 
 ###
 
@@ -14,7 +14,7 @@ DELETE https://young-thicket-23579.herokuapp.com/api/persons/5
 
 ###
 
-POST  https://young-thicket-23579.herokuapp.com/api/persons
+POST  http://localhost:3001/api/persons
 content-type: application/json
 
 {

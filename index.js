@@ -4,7 +4,9 @@ const express = require('express')
 const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
-const Entry = require('./models/entry')
+const Entry = require('./models/entry') // connection to MongoDB module
+const { collection } = require('./models/entry')
+const { Mongoose } = require('mongoose')
 
 app.use(express.json())
 app.use(express.static('build'))
@@ -18,48 +20,6 @@ morgan.token('body', (req) => { //created a token called body
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body', request.body))
 
-// SART MONGO DB Code
-const mongoose = require('mongoose')
-
-const phonebookSchema = new mongoose.Schema({
-  id: Number,
-  name: String,
-  number: String,
-})
-
-phonebookSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString()
-        delete returnedObject._id
-        delete returnedObject.__v
-    }
-})
-
-
-// END MONGO DB Code
-
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456"
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523"
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345"
-  },
-  {
-    id: 4,
-    name: "Mary Poppendick",
-    number: "39-23-6423122"
-  },
-]
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
@@ -67,7 +27,7 @@ app.get('/', (request, response) => {
 
 app.get('/api/persons', (request, response) => {
   Entry.find({}).then(entries => {
-    response.JSON(entries)
+    response.json(entries)
   })
   
 })
@@ -80,7 +40,7 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.get('/info', (request, response) => {
   response.send(
-  `<p>Phone book has info for ${persons.length} people
+  `<p>Phone book has info for ${Mongoose.Entry.count()} people
   <br></br>
   ${Date()}
   </p>`
@@ -96,14 +56,6 @@ app.delete('/api/persons/:id', (request, response) => {
   response.json(persons)
 })
 
-const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(person => person.id))
-    : 0
-
-  return maxId + 1
-}
-
 app.post('/api/persons/', (request, response) => {
   const body = request.body
   
@@ -113,21 +65,14 @@ app.post('/api/persons/', (request, response) => {
     })
   }
 
-  if (persons.find(person => person.name === body.name)) {
-    return response.status(400).json({
-      error: 'name has to be unique'
-    })
-  }
-
-  const person = {
-    id : generateId(),
+  const person = new Entry({
     name : body.name,
     number : body.number,
-  }
+  })
 
-  persons = persons.concat(person)
-
-  response.json(persons)
+  person.save().then(savedPerson =>{
+    response.json(savedPerson)
+  })
 })
 
 const PORT = process.env.PORT
