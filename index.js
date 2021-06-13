@@ -5,8 +5,6 @@ const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
 const Entry = require('./models/entry') // connection to MongoDB module
-const { collection } = require('./models/entry')
-const { Mongoose } = require('mongoose')
 
 app.use(express.json())
 app.use(express.static('build'))
@@ -20,6 +18,19 @@ morgan.token('body', (req) => { //created a token called body
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body', request.body))
 
+// const errorHandler = (error, request, response, next) => {
+//   console.error(error.message)
+
+//   if (error.name === 'CastError') {
+//     return response.status(400).send({ error: 'malformatted id' })
+//   } 
+
+//   next(error)
+// }
+
+// // this has to be the last loaded middleware.
+// app.use(errorHandler)
+
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
@@ -32,15 +43,22 @@ app.get('/api/persons', (request, response) => {
   
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  Entry.findById(request.params.id).then(entry => {
-    response.json(entry)
+app.get('/api/persons/:id', (request, response, next) => {
+  Entry.findById(request.params.id)
+  .then(entry => {
+    if (entry) {
+      response.json(entry)
+    } else {
+      response.status(404).end()
+    }
   })
+  .catch(error => next(error))
 })
+
 
 app.get('/info', (request, response) => {
   response.send(
-  `<p>Phone book has info for ${Mongoose.Entry.count()} people
+  `<p>Phone book has info for ${Entry.count()} people
   <br></br>
   ${Date()}
   </p>`
@@ -48,12 +66,12 @@ app.get('/info', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
+  Entry.findByIdAndRemove(request.params.id)
+  .then(result => {
+    response.status(204).end()
+  })
+  .catch(error => next(error))
 
-  response.status(204).end()
-
-  response.json(persons)
 })
 
 app.post('/api/persons/', (request, response) => {
@@ -70,7 +88,7 @@ app.post('/api/persons/', (request, response) => {
     number : body.number,
   })
 
-  person.save().then(savedPerson =>{
+  person.save().then(savedPerson => {
     response.json(savedPerson)
   })
 })
