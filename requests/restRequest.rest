@@ -6,6 +6,10 @@ GET https://young-thicket-23579.herokuapp.com/api/persons/2
 
 ###
 
+GET https://young-thicket-23579.herokuapp.com/info
+
+###
+
 DELETE https://young-thicket-23579.herokuapp.com/api/persons/5
 
 ###
