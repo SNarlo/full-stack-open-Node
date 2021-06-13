@@ -18,6 +18,7 @@ morgan.token('body', (req) => { //created a token called body
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body', request.body))
 
+// Need to Fix error handling function
 // const errorHandler = (error, request, response, next) => {
 //   console.error(error.message)
 
