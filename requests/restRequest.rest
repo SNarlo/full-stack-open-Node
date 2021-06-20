@@ -2,15 +2,15 @@ GET https://young-thicket-23579.herokuapp.com/api/persons
 
 ###
 
-GET http://localhost:3001/api/persons/3
-
-###
-
 GET http://localhost:3001/api/persons
 
 ###
 
-DELETE http://localhost:3001/api/persons/60c578a8d98c87b0a05bf475
+GET http://localhost:3001/api/persons/60cf179e194b43e24e274bac
+
+###
+
+DELETE http://localhost:3001/api/persons/60cf179e194b43e
 
 ###
 

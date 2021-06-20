@@ -18,19 +18,18 @@ morgan.token('body', (req) => { //created a token called body
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body', request.body))
 
-// Need to Fix error handling function
-// const errorHandler = (error, request, response, next) => {
-//   console.error(error.message)
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
 
-//   if (error.name === 'CastError') {
-//     return response.status(400).send({ error: 'malformatted id' })
-//   } 
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
 
-//   next(error)
-// }
+  next(error)
+}
 
-// // this has to be the last loaded middleware.
-// app.use(errorHandler)
+// this has to be the last loaded middleware.
+app.use(errorHandler)
 
 
 app.get('/', (request, response) => {
@@ -50,7 +49,7 @@ app.get('/api/persons/:id', (request, response, next) => {
     if (entry) {
       response.json(entry)
     } else {
-      response.status(404).end()
+      response.status(400).end()
     }
   })
   .catch(error => next(error))
@@ -66,13 +65,12 @@ app.get('/info', (request, response) => {
   )
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Entry.findByIdAndRemove(request.params.id)
   .then(result => {
     response.status(204).end()
   })
   .catch(error => next(error))
-
 })
 
 app.post('/api/persons/', (request, response) => {
@@ -92,6 +90,13 @@ app.post('/api/persons/', (request, response) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  Entry.findById(request.params.id)
+  .then(entry => console.log(entry))
 })
 
 const PORT = process.env.PORT
