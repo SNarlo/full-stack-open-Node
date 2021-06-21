@@ -56,9 +56,12 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 
-app.get('/info', (request, response) => {
+app.get('/info',  async (request, response) => {
+
+  let count = await Entry.collection.find({}).count()
+
   response.send(
-  `<p>Phone book has info for ${Entry.count()} people
+  `<p>Phone book has info for ${count} people
   <br></br>
   ${Date()}
   </p>`
