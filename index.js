@@ -95,8 +95,15 @@ app.post('/api/persons/', (request, response) => {
 app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
 
-  Entry.findById(request.params.id)
-  .then(entry => console.log(entry))
+  const entry = {
+    number: body.number
+  }
+
+  Entry.findByIdAndUpdate(request.params.id, entry, {new:true})
+  .then(updatedentry => {
+    response.json(updatedentry)
+  })
+  .catch(error => next(error))
 })
 
 const PORT = process.env.PORT
