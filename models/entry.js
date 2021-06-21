@@ -15,8 +15,8 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFind
 
 const phonebookSchema = new mongoose.Schema({
   id: {type: Number, unique: true},
-  name: {type: String, required: true, unique: true},
-  number: {type: String, required: true, unique: true},
+  name: {type: String, required: true, unique: true, minLength: 3},
+  number: {type: String, required: true, unique: true, minLength: 8},
 })
 
 phonebookSchema.set('toJSON', {
