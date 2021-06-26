@@ -24,7 +24,7 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({error: error.message})
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
@@ -42,19 +42,19 @@ app.get('/api/persons', (request, response) => {
   Entry.find({}).then(entries => {
     response.json(entries)
   })
-  
+
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
   Entry.findById(request.params.id)
-  .then(entry => {
-    if (entry) {
-      response.json(entry)
-    } else {
-      response.status(400).end()
-    }
-  })
-  .catch(error => next(error))
+    .then(entry => {
+      if (entry) {
+        response.json(entry)
+      } else {
+        response.status(400).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 
@@ -63,7 +63,7 @@ app.get('/info',  async (request, response) => {
   let count = await Entry.collection.find({}).count()
 
   response.send(
-  `<p>Phone book has info for ${count} people
+    `<p>Phone book has info for ${count} people
   <br></br>
   ${Date()}
   </p>`
@@ -72,18 +72,18 @@ app.get('/info',  async (request, response) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Entry.findByIdAndRemove(request.params.id)
-  .then(result => {
-    response.status(204).end()
-  })
-  .catch(error => next(error))
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons/', (request, response, next) => {
   const body = request.body
-  
+
   if (!body.name || !body.number) {
-    return response.status(400).json({ 
-      error: 'content missing'       
+    return response.status(400).json({
+      error: 'content missing'
     })
   }
 
@@ -95,7 +95,7 @@ app.post('/api/persons/', (request, response, next) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -105,14 +105,14 @@ app.put('/api/persons/:id', (request, response, next) => {
     number: body.number
   }
 
-  Entry.findByIdAndUpdate(request.params.id, entry, {new:true})
-  .then(updatedentry => {
-    response.json(updatedentry)
-  })
-  .catch(error => next(error))
+  Entry.findByIdAndUpdate(request.params.id, entry, { new:true })
+    .then(updatedentry => {
+      response.json(updatedentry)
+    })
+    .catch(error => next(error))
 })
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-    console.log(`Server running on PORT ${PORT}`)
+  console.log(`Server running on PORT ${PORT}`)
 })
